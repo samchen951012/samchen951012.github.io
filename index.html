@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陳信宇 (samchen951012) - 個人網頁</title>
+    <!-- 引入 jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <style>
+        /* CSS 樣式設計 */
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2.2rem;
+        }
+        header p {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        .btn-dark {
+            background-color: #34495e;
+        }
+        .btn-dark:hover {
+            background-color: #2c3e50;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: #e1f0fa;
+            color: #2980b9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 4px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        #ajax-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        /* 深色模式切換樣式 */
+        body.dark-mode {
+            background-color: #1a1a2e;
+            color: #eaeaea;
+        }
+        body.dark-mode .card {
+            background-color: #16213e;
+            color: #eaeaea;
+        }
+        body.dark-mode h2 {
+            color: #4ea8de;
+        }
+        body.dark-mode #ajax-result {
+            background-color: #0f3460;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>陳信宇 (Sam Chen)</h1>
+        <p>GitHub: @samchen951012 | Web 基本原理與技術 Personal Page</p>
+    </header>
+
+    <div class="container">
+        <!-- 個人簡介區塊 -->
+        <section class="card">
+            <h2>關於我 (About Me)</h2>
+            <p>你好！我是陳信宇，目前就讀於輔仁大學資訊相關學系。這是我在「Web 基本原理與技術」課程中建立的個人 GitHub Pages 網頁，整合了 HTML5、CSS3、JSON、Ajax 與 jQuery 技術。</p>
+            <button id="toggle-theme-btn" class="btn btn-dark">切換深色 / 淺色模式 (jQuery)</button>
+            <button id="toggle-info-btn" class="btn">顯示 / 隱藏更多聯絡資訊</button>
+            <div id="more-info" style="display: none; margin-top: 10px; color: #555;">
+                <p><strong>GitHub 個人主頁：</strong> <a href="https://github.com/samchen951012" target="_blank">https://github.com/samchen951012</a></p>
+                <p><strong>學習目標：</strong> 熟悉前端網頁開發架構、Git 版本控制與非同步資料串接。</p>
+            </div>
+        </section>
+
+        <!-- 技能清單區塊 -->
+        <section class="card">
+            <h2>本週學習技術 (Skills)</h2>
+            <div>
+                <span class="skill-tag">Git & GitHub</span>
+                <span class="skill-tag">HTML5</span>
+                <span class="skill-tag">CSS3</span>
+                <span class="skill-tag">JSON</span>
+                <span class="skill-tag">Ajax</span>
+                <span class="skill-tag">jQuery</span>
+            </div>
+        </section>
+
+        <!-- Ajax + JSON 動態載入區塊 -->
+        <section class="card">
+            <h2>Ajax & JSON 動態資料載入測試</h2>
+            <p>點擊下方按鈕，透過 jQuery 的 <code>$.ajax()</code> 方法非同步讀取 GitHub API 的公開 JSON 資料：</p>
+            <button id="load-github-btn" class="btn">載入我的 GitHub JSON 資訊</button>
+            <div id="ajax-result"></div>
+        </section>
+    </div>
+
+    <script>
+        // 確保 DOM 載入完成後執行 jQuery
+        $(document).ready(function() {
+            
+            // jQuery 功能 1：切換深色/淺色主題
+            $("#toggle-theme-btn").click(function() {
+                $("body").toggleClass("dark-mode");
+            });
+
+            // jQuery 功能 2：滑動顯示/隱藏聯絡資訊
+            $("#toggle-info-btn").click(function() {
+                $("#more-info").slideToggle(300);
+            });
+
+            // jQuery 功能 3：透過 Ajax 抓取 GitHub API (JSON 格式)
+            $("#load-github-btn").click(function() {
+                const $resultBox = $("#ajax-result");
+                $resultBox.show().html("正在透過 Ajax 載入 JSON 資料中...");
+
+                $.ajax({
+                    url: "https://api.github.com/users/samchen951012",
+                    method: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        const htmlContent = `
+                            <strong>成功取得 GitHub JSON 資料！</strong><br>
+                            • 使用者帳號：${data.login}<br>
+                            • 公開專案數量 (Public Repos)：${data.public_repos}<br>
+                            • 追蹤者 (Followers)：${data.followers}<br>
+                            • 帳號建立時間：${new Date(data.created_at).toLocaleDateString()}
+                        `;
+                        $resultBox.html(htmlContent);
+                    },
+                    error: function() {
+                        $resultBox.html("載入失敗，請稍後再試。");
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
